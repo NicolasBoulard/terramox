@@ -25,6 +25,9 @@ variable "pm_host" {
 variable "guest_username" {
     type = string
 }
+variable "domain" {
+    type = string
+}
 variable "ssh_public_key" {
     type = string
 }
