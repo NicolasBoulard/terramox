@@ -1,0 +1,43 @@
+- name: Remove default motd message file
+  become: true
+  ansible.builtin.file:
+    path: /etc/update-motd.d/10-uname
+    state: absent
+
+- name: Copy welcomes scripts
+  become: true
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0755
+  with_items:
+    - { src: "10-login-info.sh", dest: "/etc/update-motd.d/10-login-info" }
+    - { src: "20-memory.sh", dest: "/etc/update-motd.d/20-memory" }
+    - { src: "30-disk-space.sh", dest: "/etc/update-motd.d/30-disk-space" }
+    - { src: "40-last-login.sh", dest: "/etc/update-motd.d/40-last-login" }
+
+- name: Set banner message
+  become: true
+  lineinfile: dest=/etc/ssh/sshd_config
+              regexp="^Banner"
+              line="Banner /etc/ssh/banner"
+              state=present
+
+- name: Disable last login message
+  become: true
+  lineinfile: dest=/etc/ssh/sshd_config
+              regexp="^PrintLastLog"
+              line="PrintLastLog no"
+              state=present
+            
+- name: Remove motd message 
+  become: true
+  ansible.builtin.copy:
+    content: ""
+    dest: /etc/motd
+
+- name: Restart sshd service 
+  become: true
+  ansible.builtin.service:
+    name: sshd
+    state: restarted

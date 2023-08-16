@@ -1,0 +1,7 @@
+- name: Setup bastion host
+  hosts: default
+  roles:
+    - ssh-config
+    - bastion
+  vars:
+    server: "Bastion"

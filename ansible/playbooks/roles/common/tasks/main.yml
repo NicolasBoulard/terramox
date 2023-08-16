@@ -1,0 +1,93 @@
+- name: Create nicolas user
+  become: true
+  ansible.builtin.user:
+    name: nicolas
+    shell: "/bin/bash"
+    generate_ssh_key: yes
+    ssh_key_bits: 4096
+    ssh_key_file: .ssh/id_rsa
+
+- name: Add nicolas user to the sudoers
+  become: true
+  copy:
+    dest: "/etc/sudoers.d/nicolas"
+    content: "nicolas  ALL=(ALL)  NOPASSWD: ALL"
+
+- name: Ensure users have no password
+  become: true
+  user:
+    name: "{{ item }}"
+    password_lock: yes
+  with_items:
+    - root
+    - "{{ prov_user }}"
+    - nicolas
+
+- name: Set authorized key for prov user
+  become: true
+  ansible.posix.authorized_key:
+    user: "{{ prov_user }}"
+    state: present
+    key: '{{ item }}'
+  with_file:
+    - ../../../../ssh_keys/nicolas-laptop.pub
+
+- name: Set authorized key for nicolas user
+  become: true
+  ansible.posix.authorized_key:
+    user: nicolas
+    state: present
+    key: '{{ item }}'
+  with_file:
+    - ../../../../ssh_keys/nicolas-laptop.pub
+
+- name: Sudo without password for wheel group
+  become: true
+  copy:
+    content: '%wheel ALL=(ALL:ALL) NOPASSWD:ALL'
+    dest: /etc/sudoers.d/wheel_nopasswd
+    mode: 0440
+
+- name: Disallow password authentication
+  become: true
+  lineinfile: dest=/etc/ssh/sshd_config
+              regexp="^PasswordAuthentication"
+              line="PasswordAuthentication no"
+              state=present
+
+- name: Disallow root SSH access
+  become: true
+  lineinfile: dest=/etc/ssh/sshd_config
+              regexp="^PermitRootLogin"
+              line="PermitRootLogin no"
+              state=present
+
+- name: Restart sshd service 
+  become: true
+  service:
+    name: sshd
+    state: restarted
+
+- name: Install necessary packages
+  become: true
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - cloud-init
+
+- name: Performing a Package Upgrade
+  become: true
+  apt:
+    name: '*'
+    state: latest
+
+# - name: Set network interfaces to dhcp mode
+#   become: yes
+#   community.general.nmcli:
+#     conn_name: 'enp0s18'
+#     type: ethernet
+#     state: present
+#     autoconnect: yes
+#     ifname: '*'
+#     method4: auto

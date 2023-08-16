@@ -1,6 +1,9 @@
-# terramox 🏗️
+# Terramox 🏗️
 All this repo contains infrastructure for my proxmox server
+## Step by step init
 
+1. Run `cd packer/template` and `packer init`
+2. Run `packer build -var "myvar=value"`
 ## Environment variables
 
 | Name | Default value | Mandatory | Description  |

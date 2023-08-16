@@ -1,0 +1,94 @@
+- name: Run package upgrade
+  become: true
+  ansible.builtin.apt:
+    upgrade: yes
+    update_cache: yes
+
+- name: Install necessary packages
+  become: true
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - xrdp
+    - xfce4
+    - nftables
+    - xfce4-terminal
+    - python3
+    - ansible
+    - firefox-esr
+    - nftables
+    - htop
+
+- name: Set password for nicolas user
+  become: true
+  ansible.builtin.user:
+    name: nicolas
+    password: "password"
+
+# - name: Generate banner
+#   become: true
+#   ansible.builtin.template:
+#     src: banner.j2
+#     dest: /etc/ssh/banner
+
+- name: Copy custom welcomes scripts
+  become: true
+  ansible.builtin.copy:
+    src: "00-castle.sh"
+    dest: "/etc/update-motd.d/00-castle"
+    mode: 0755
+
+- name: Add xrdp user to ssl-cert group
+  become: true
+  ansible.builtin.user:
+    name: xrdp
+    groups: ssl-cert
+    append: yes
+
+- name: Fix polkit authorization
+  become: true
+  ansible.builtin.copy:
+    content: |
+      [Allow Colord all Users]
+      Identity=unix-user:*
+      Action=org.freedesktop.color-manager.create-device;org.freedesktop.color-manager.create-profile;org.freedesktop.color-manager.delete-device;org.freedesktop.color-manager.delete-profile;org.freedesktop.color-manager.modify-device;org.freedesktop.color-manager.modify-profile
+      ResultAny=no
+      ResultInactive=no
+      ResultActive=yes
+    dest: /etc/polkit-1/localauthority/50-local.d/45-allow-colord.pkla
+
+- name: Restart xrdp process
+  become: true
+  ansible.builtin.shell:
+    cmd: 'systemctl restart xrdp'
+
+- name: Add Lens repository key
+  become: true
+  ansible.builtin.apt_key:
+    url: https://downloads.k8slens.dev/keys/gpg
+    state: present
+
+- name: Add Lens repository source
+  become: true
+  lineinfile:
+    path: /etc/apt/sources.list.d/lens.list
+    line: 'deb [arch=amd64] https://downloads.k8slens.dev/apt/debian stable main'
+    state: present
+    create: yes
+
+- name: Run package update
+  become: true
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install Lens package
+  become: true
+  ansible.builtin.apt:
+    name: lens
+    state: present
+
+- name: Set bastion hostname
+  become: true
+  ansible.builtin.hostname:
+    name: bastion
