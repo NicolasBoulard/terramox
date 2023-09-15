@@ -1,8 +1,15 @@
 # Packer
 ## Template dependencies
 You must build the template in this order:
+```mermaid
+graph LR
+A(debian-template) --> B(bastion-template)
+B --> C(k3s-template)
+```
 1. `debian-template`
-2. `k3s-template`
+2. `bastion-template`
+3. `k3s-template`
+   
 
 ## Command
 You can use the following command to build the template:
