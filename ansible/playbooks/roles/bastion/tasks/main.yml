@@ -92,3 +92,30 @@
   become: true
   ansible.builtin.hostname:
     name: bastion
+
+- name: Create .ssh directory for nicolas user
+  become: true
+  ansible.builtin.file:
+    path: /home/nicolas/.ssh
+    state: directory
+    owner: nicolas
+    mode: 0700
+
+- name: Generate an OpenSSH rsa keypair for nicolas user
+  community.crypto.openssh_keypair:
+    path: /home/nicolas/.ssh/id_rsa
+    size: 4096
+  register: keypair
+
+- name: Create public key file for nicolas user
+  become: true
+  ansible.builtin.copy:
+    content: "{{ keypair.public_key }}"
+    dest: /home/nicolas/.ssh/id_rsa.pub
+    owner: nicolas
+    mode: 0600
+
+- name: Save localy nicolas public key
+  ansible.builtin.copy:
+    content: "{{ keypair.public_key }}"
+    dest: "{{ playbook_dir }}/files/nicolas-bastion.pub"

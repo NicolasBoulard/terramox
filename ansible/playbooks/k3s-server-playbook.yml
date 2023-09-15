@@ -1,0 +1,5 @@
+- name: Run common roles
+  hosts: default
+  roles:
+    - k3s-install
+    - k3s-server

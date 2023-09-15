@@ -20,7 +20,3 @@ variable "pm_host" {
     default = "hodor"
 }
 
-# Guest VM details
-variable "guest_username" {
-    type = string
-}

@@ -1,0 +1,7 @@
+[k3s-server]
+k3s-server ansible_host=10.100.0.200 ansible_user=nicolas
+
+[k3s-agent]
+k3s-agent-1 ansible_host=10.100.0.201 ansible_user=nicolas
+k3s-agent-2 ansible_host=10.100.0.202 ansible_user=nicolas
+k3s-agent-3 ansible_host=10.100.0.203 ansible_user=nicolas

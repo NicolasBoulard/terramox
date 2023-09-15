@@ -1,0 +1,13 @@
+- name: Read k3s_token from local file
+  slurp:
+    src: "{{ playbook_dir }}/files/k3s_token"
+  register: K3S_TOKEN
+
+- name: Read k3s_server_ip from local file
+  slurp:
+    src: "{{ playbook_dir }}/files/k3s_server_ip"
+  register: K3S_SERVER_IP
+
+- name: Run installer script
+  become: true
+  shell: INSTALL_K3S_SKIP_DOWNLOAD=true K3S_URL=https://{{ K3S_SERVER_IP }}:6443 K3S_TOKEN={{ K3S_TOKEN }} /tmp/k3s-install.sh

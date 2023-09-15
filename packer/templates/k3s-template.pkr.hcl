@@ -40,7 +40,8 @@ variable "local_ip" {
 variable "local_port" {
     type = number
 }
-source "proxmox-clone" "bastion-template" {
+
+source "proxmox-clone" "k3s-template" {
     clone_vm = "debian-12-0-0-template"
     # Proxmox Connection Settings
     proxmox_url = "${var.pm_api_url}"
@@ -50,9 +51,9 @@ source "proxmox-clone" "bastion-template" {
     
     # VM General Settings
     node = "${var.pm_host}" # add your proxmox node
-    vm_id = "90002"
-    vm_name = "bastion-template"
-    template_description = "Bastion Template"
+    vm_id = "90010"
+    vm_name = "k3s-template"
+    template_description = "K3s Template"
 
     # VM OS Settings
     
@@ -78,17 +79,12 @@ source "proxmox-clone" "bastion-template" {
     cores = "2"
     
     # VM Memory Settings
-    memory = "2048" 
+    memory = "4096" 
 
     # VM Network Settings
     network_adapters {
         model = "virtio"
         bridge = "vmbr0"
-        firewall = "false"
-    }
-    network_adapters {
-        model = "virtio"
-        bridge = "vmbr2"
         firewall = "false"
     }
 
@@ -128,16 +124,17 @@ source "proxmox-clone" "bastion-template" {
     ssh_timeout = "20m"
 }
 build {
-    name = "bastion-template"
-    sources = ["source.proxmox-clone.bastion-template"]
+    name = "k3s-template"
+    sources = ["source.proxmox-clone.k3s-template"]
 
     provisioner "ansible" {
-        only = ["proxmox-clone.bastion-template"]
-        playbook_file = "../../ansible/playbooks/bastion-playbook.yml"
+        only = ["proxmox-clone.k3s-template"]
+        playbook_file = "../../ansible/playbooks/k3s-playbook.yml"
         #roles_path = "../../ansible/roles"
         user = var.guest_username
         ansible_env_vars = ["ANSIBLE_HOST_KEY_CHECKING=False", "ANSIBLE_CONFIG=./ansible/ansible.cfg"]
         extra_arguments = ["--extra-vars", "prov_user=${var.guest_username}"]
+        #ansible_ssh_common_args = ["-o", "ProxyJump=${var.guest_username}@${var.local_ip}"]
         #inventory_file_template = "{{ .HostAlias }} ansible_host={{ .Host }} ansible_user={{ .User }} ansible_port={{ .Port }}\n"
     }
 }

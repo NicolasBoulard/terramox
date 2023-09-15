@@ -1,0 +1,36 @@
+- name: Add nicolas bastion key for nicolas user
+  become: true
+  ansible.posix.authorized_key:
+    user: nicolas
+    state: present
+    key: '{{ item }}'
+  with_file:
+    - "{{ playbook_dir }}/files/nicolas-bastion.pub"
+
+- name: Create folder for k3s binaries
+  become: true
+  file:
+    path: /var/lib/rancher/k3s/agent/images/
+    state: directory
+    mode: 0755
+
+- name: Download k3s images 
+  become: true
+  get_url:
+    url: https://github.com/k3s-io/k3s/releases/download/v1.27.4%2Bk3s1/k3s-airgap-images-amd64.tar
+    dest: "/var/lib/rancher/k3s/agent/images/"
+    mode: 0755
+
+- name: Download binairies 
+  become: true
+  get_url:
+    url: https://github.com/k3s-io/k3s/releases/download/v1.27.4%2Bk3s1/k3s
+    dest: "/usr/local/bin"
+    mode: 0755
+
+- name: Download installer
+  become: true
+  get_url:
+    url: https://get.k3s.io/
+    dest: "/tmp/k3s-install.sh"
+    mode: 0755

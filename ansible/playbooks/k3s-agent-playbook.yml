@@ -1,0 +1,8 @@
+- name: Run common roles
+  hosts: default
+  roles:
+    - k3s-install
+    - k3s-agent
+  vars: 
+    K3S_SERVER_IP: "{{ hostvars['k3s-server'].ansible_host }}"
+    K3S_TOKEN: "{{ hostvars['k3s-server'].k3s_token.stdout }}"
