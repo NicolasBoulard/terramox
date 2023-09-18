@@ -1,5 +1,8 @@
 - name: Run common roles
-  hosts: default
+  hosts: 
+    - k3s-agent-1
+    - k3s-agent-2
+    - k3s-agent-3
   roles:
     - k3s-install
     - k3s-agent

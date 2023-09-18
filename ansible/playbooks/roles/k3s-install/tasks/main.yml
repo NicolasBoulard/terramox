@@ -7,6 +7,15 @@
   with_file:
     - "{{ playbook_dir }}/files/nicolas-bastion.pub"
 
+- name: Add nicolas bastion key for prov user
+  become: true
+  ansible.posix.authorized_key:
+    user: "{{ prov_user }}"
+    state: present
+    key: '{{ item }}'
+  with_file:
+    - "{{ playbook_dir }}/files/{{ prov_user }}-bastion.pub"
+
 - name: Create folder for k3s binaries
   become: true
   file:

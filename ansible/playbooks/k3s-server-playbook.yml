@@ -1,5 +1,21 @@
 - name: Run common roles
-  hosts: default
+  hosts: k3s-server
   roles:
     - k3s-install
     - k3s-server
+    
+- name: Save k3s_token to a local file
+  hosts: localhost
+  tasks:
+    - name: Copy k3s_token to a local file
+      copy:
+        content: "{{ k3s_token.stdout }}"
+        dest: "{{ playbook_dir }}/files/k3s_token"
+
+- name: Save k3s_server_ip to a local file
+  hosts: localhost
+  tasks:
+    - name: Copy k3s_server_ip to a local file
+      copy:
+        content: "{{ k3s_server_ip.stdout }}"
+        dest: "{{ playbook_dir }}/files/k3s_server_ip"

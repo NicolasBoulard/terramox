@@ -20,18 +20,6 @@
     - nftables
     - htop
 
-- name: Set password for nicolas user
-  become: true
-  ansible.builtin.user:
-    name: nicolas
-    password: "password"
-
-# - name: Generate banner
-#   become: true
-#   ansible.builtin.template:
-#     src: banner.j2
-#     dest: /etc/ssh/banner
-
 - name: Copy custom welcomes scripts
   become: true
   ansible.builtin.copy:
@@ -102,20 +90,87 @@
     mode: 0700
 
 - name: Generate an OpenSSH rsa keypair for nicolas user
+  become: true
   community.crypto.openssh_keypair:
     path: /home/nicolas/.ssh/id_rsa
+    owner: nicolas
     size: 4096
   register: keypair
 
 - name: Create public key file for nicolas user
   become: true
   ansible.builtin.copy:
-    content: "{{ keypair.public_key }}"
+    content: "{{ keypair.public_key }} nicolas@{{ ansible_hostname }}"
     dest: /home/nicolas/.ssh/id_rsa.pub
     owner: nicolas
     mode: 0600
 
 - name: Save localy nicolas public key
+  delegate_to: localhost
   ansible.builtin.copy:
-    content: "{{ keypair.public_key }}"
+    content: "{{ keypair.public_key }} nicolas@{{ ansible_hostname }}"
     dest: "{{ playbook_dir }}/files/nicolas-bastion.pub"
+
+
+- name: Create .ssh directory for prov user
+  become: true
+  ansible.builtin.file:
+    path: "/home/{{ prov_user }}/.ssh"
+    state: directory
+    owner: "{{ prov_user }}"
+    mode: 0700
+
+# TOBE FIXED
+- name: Generate an OpenSSH rsa keypair for prov user
+  become: true
+  community.crypto.openssh_keypair:
+    path: "/home/{{ prov_user }}/.ssh/id_rsa"
+    owner: "{{ prov_user }}"
+    size: 4096
+  register: keypair
+
+- name: Create public key file for prov user
+  become: true
+  ansible.builtin.copy:
+    content: "{{ keypair.public_key }} {{ prov_user }}@{{ ansible_hostname }}"
+    dest: "/home/{{ prov_user }}/.ssh/id_rsa.pub"
+    owner: "{{ prov_user }}"
+    mode: 0600
+
+- name: Save localy prov public key
+  delegate_to: localhost
+  ansible.builtin.copy:
+    content: "{{ keypair.public_key }} {{ prov_user }}@{{ ansible_hostname }}"
+    dest: "{{ playbook_dir }}/files/{{ prov_user }}-bastion.pub"
+
+# - name: Generate an OpenSSH rsa keypair for users
+#   become: true
+#   community.crypto.openssh_keypair:
+#     path: "/home/{{ item }}/.ssh/id_rsa"
+#     owner: "{{ item }}"
+#     size: 4096
+#     force: yes
+#   register: keypair
+#   with_items: 
+#     - nicolas
+#     - "{{ prov_user }}"
+
+# - name: Create public key file for users
+#   become: true
+#   ansible.builtin.copy:
+#     content: "{{ item.1.public_key }} {{ item.0 }}@{{ ansible_hostname }}"
+#     dest: "/home/{{ item.0 }}/.ssh/id_rsa.pub"
+#     owner: "{{ item.0 }}"
+#     mode: 0600
+#     force: yes
+#   loop: "{{ keypair.results }}"
+#   when: item.1 is defined
+
+# - name: Save locally Nicolas public key
+#   delegate_to: localhost
+#   ansible.builtin.copy:
+#     content: "{{ item.1.public_key }} {{ item.0 }}@{{ ansible_hostname }}"
+#     dest: "{{ playbook_dir }}/files/{{ item.0 }}-bastion.pub"
+#     force: yes
+#   loop: "{{ keypair.results }}"
+#   when: item.1 is defined

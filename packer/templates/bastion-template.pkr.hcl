@@ -41,7 +41,7 @@ variable "local_port" {
     type = number
 }
 source "proxmox-clone" "bastion-template" {
-    clone_vm = "debian-12-0-0-template"
+    clone_vm = "debian-12-1-0-template"
     # Proxmox Connection Settings
     proxmox_url = "${var.pm_api_url}"
     username = "${var.pm_api_token_id}"
@@ -138,6 +138,6 @@ build {
         user = var.guest_username
         ansible_env_vars = ["ANSIBLE_HOST_KEY_CHECKING=False", "ANSIBLE_CONFIG=./ansible/ansible.cfg"]
         extra_arguments = ["--extra-vars", "prov_user=${var.guest_username}"]
-        #inventory_file_template = "{{ .HostAlias }} ansible_host={{ .Host }} ansible_user={{ .User }} ansible_port={{ .Port }}\n"
+        inventory_file_template = "{{ .HostAlias }} ansible_host={{ .Host }} ansible_user={{ .User }} ansible_port={{ .Port }}\n"
     }
 }

@@ -42,7 +42,7 @@ variable "local_port" {
 }
 
 source "proxmox-clone" "k3s-template" {
-    clone_vm = "debian-12-0-0-template"
+    clone_vm = "debian-12-1-0-template"
     # Proxmox Connection Settings
     proxmox_url = "${var.pm_api_url}"
     username = "${var.pm_api_token_id}"

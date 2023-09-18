@@ -1,0 +1,10 @@
+#!/bin/bash
+BASTION_HOST="10.0.0.100"
+REPO_DIR="/home/prov/terramox/ansible/"
+echo "Copying Ansible Playbooks to bastion host"
+
+ssh prov@$BASTION_HOST "mkdir -p $REPO_DIR"
+scp -pr * prov@$BASTION_HOST:/home/prov/terramox/ansible/ 
+echo "Installing Ansible Galaxy Collections"
+ssh prov@$BASTION_HOST "cd $REPO_DIR; ansible-galaxy collection install -r requirements.yml"
+ssh prov@$BASTION_HOST "cd $REPO_DIR/playbooks; ansible-playbook -i ../inventories/prod/hosts k3s-server-playbook.yml"

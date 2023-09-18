@@ -71,3 +71,19 @@ resource "proxmox_vm_qemu" "k3s-agent" {
 #     ${join("\n", [for vm in var.vm_configs : "${vm.name} ansible_host=${proxmox_vm_qemu.vm[vm.name].ssh_host} ansible_user=nicolas"])}
 #   EOT
 # }
+
+
+# resource "local_file" "inventory" {
+#   filename = "inventory"
+#   content  = <<-EOT
+# [pve_kub_master]
+# %{ for instance in proxmox_vm_qemu.vm_master ~}
+# ${instance.name} ansible_host=${instance.ssh_host}
+# %{ endfor ~}
+
+# [pve_kub_worker]
+# %{ for instance in proxmox_vm_qemu.vm_worker ~}
+# ${instance.name} ansible_host=${instance.ssh_host}
+# %{ endfor ~}
+#   EOT
+# }

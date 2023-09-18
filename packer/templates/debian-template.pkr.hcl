@@ -52,14 +52,14 @@ source "proxmox-iso" "debian-template" {
     # VM General Settings
     node = "${var.pm_host}" # add your proxmox node
     vm_id = "90001"
-    vm_name = "debian-12-0-0-template"
+    vm_name = "debian-12-1-0-template"
     template_description = "Debian Template"
 
     # VM OS Settings
     # Iso file of debian 12 stable
     #iso_file = "monkey:iso/debian-12.0.0-amd64-netinst.iso"
-    iso_url = "https://cdimage.debian.org/cdimage/archive/12.0.0/amd64/iso-cd/debian-12.0.0-amd64-netinst.iso"
-    iso_checksum = "file:https://cdimage.debian.org/cdimage/archive/12.0.0/amd64/iso-cd/SHA256SUMS"
+    iso_url = "https://cdimage.debian.org/cdimage/release/current/amd64/iso-cd/debian-12.1.0-amd64-netinst.iso"
+    iso_checksum = "file:https://cdimage.debian.org/cdimage/release/current/amd64/iso-cd/SHA256SUMS"
 
     # Download the ISO file directly from PVE
     iso_download_pve = true
