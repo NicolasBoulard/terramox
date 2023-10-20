@@ -41,7 +41,7 @@ variable "local_port" {
     type = number
 }
 source "proxmox-clone" "bastion-template" {
-    clone_vm = "debian-12-1-0-template"
+    clone_vm = "debian-12-2-0-template"
     # Proxmox Connection Settings
     proxmox_url = "${var.pm_api_url}"
     username = "${var.pm_api_token_id}"
