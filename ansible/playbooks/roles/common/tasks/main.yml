@@ -23,23 +23,36 @@
     - "{{ prov_user }}"
     - nicolas
 
+- name: List key in folder locally
+  delegate_to: localhost
+  ansible.builtin.shell: ls -1 ../../ansible/ssh_keys
+  register: key_files
+
+- name: Set authorized key for nicolas user with local key
+  become: true
+  ansible.posix.authorized_key:
+    user: nicolas
+    state: present
+    key: "{{ lookup('file', '../../ansible/ssh_keys/' ~ item) }}"
+  with_items: "{{ key_files.stdout_lines  }}"
+
+
 - name: Set authorized key for prov user
   become: true
   ansible.posix.authorized_key:
     user: "{{ prov_user }}"
     state: present
-    key: '{{ item }}'
-  with_file:
-    - ../../../../ssh_keys/nicolas-laptop.pub
+    key: "{{ lookup('file', '../../ansible/ssh_keys/' ~ item) }}"
+  with_items: "{{ key_files.stdout_lines  }}"
 
-- name: Set authorized key for nicolas user
-  become: true
-  ansible.posix.authorized_key:
-    user: nicolas
-    state: present
-    key: '{{ item }}'
-  with_file:
-    - ../../../../ssh_keys/nicolas-laptop.pub
+# - name: Set authorized key for nicolas user
+#   become: true
+#   ansible.posix.authorized_key:
+#     user: nicolas
+#     state: present
+#     key: '{{ item }}'
+#   with_file:
+#     - ../../../../ssh_keys/nicolas-laptop.pub
 
 - name: Sudo without password for wheel group
   become: true

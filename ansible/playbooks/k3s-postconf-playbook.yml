@@ -1,0 +1,15 @@
+- name: Run common roles
+  hosts: k3s-server
+  roles:
+    - k3s-server
+
+- name: Run common roles
+  hosts: 
+    - k3s-agent-1
+    - k3s-agent-2
+    - k3s-agent-3
+  roles:
+    - k3s-agent
+  vars: 
+    K3S_SERVER_IP: "{{ hostvars['k3s-server'].ansible_host }}"
+    K3S_TOKEN: "{{ hostvars['k3s-server'].k3s_token.stdout }}"

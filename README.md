@@ -4,7 +4,8 @@ All this repo contains infrastructure for my proxmox server
 
 1. Run `cd packer/template` and `packer init config.pkr.hcl`
 2. Run `packer build -var "myvar=value" debian-template`
-3. Post-config for k3s_environment run `cd ansible; ansible-playbook -i inventory/hosts.ini post-config.yml`
+3. Deploy infrastructure with `cd terraform/environment/prod; terraform init; terraform apply`
+4. Once infrastructure is deployed, post-config for k3s_environment run `cd ansible; ansible-playbook -i inventory/hosts.ini k3s-playbook.yml`
 ## Environment variables
 
 | Name | Default value | Mandatory | Description  |

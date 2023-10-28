@@ -14,6 +14,8 @@ resource "proxmox_vm_qemu" "k3s-server" {
     os_type  = "cloud-init"
     agent = 1
 
+    scsihw = "virtio-scsi-pci"
+
     disk {
         type     = "scsi"
         storage  = "local-lvm"
@@ -29,6 +31,14 @@ resource "proxmox_vm_qemu" "k3s-server" {
         macaddr = "52:54:01:00:02:00"
     }
     ipconfig0 = "ip=10.100.0.200/24"
+
+    network {
+        model   = "virtio"
+        bridge  = "vmbr0"
+        firewall = false
+        macaddr = "52:54:00:00:02:00"
+    }
+    ipconfig1 = "ip=10.0.0.200/24"
 }
 
 resource "proxmox_vm_qemu" "k3s-agent" {
@@ -45,6 +55,8 @@ resource "proxmox_vm_qemu" "k3s-agent" {
     cpu      = "host"
     os_type  = "cloud-init"
     agent = 1
+
+    scsihw = "virtio-scsi-pci"
 
     disk {
         type     = "scsi"

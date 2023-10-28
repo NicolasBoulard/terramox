@@ -156,7 +156,7 @@ build {
         #roles_path = "../../ansible/roles"
         user = var.guest_username
         ansible_env_vars = ["ANSIBLE_HOST_KEY_CHECKING=False", "ANSIBLE_CONFIG=./ansible/ansible.cfg"]
-        extra_arguments = ["--extra-vars", "prov_user=${var.guest_username}"]
+        extra_arguments = ["--extra-vars", "prov_user=${var.guest_username}", "--scp-extra-args", "'-O'"]
         #inventory_file_template = "{{ .HostAlias }} ansible_host={{ .Host }} ansible_user={{ .User }} ansible_port={{ .Port }}\n"
     }
     # provisioner "file" {

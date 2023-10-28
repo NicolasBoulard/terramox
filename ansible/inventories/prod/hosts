@@ -1,7 +1,17 @@
 [k3s-server]
-k3s-server ansible_host=10.100.0.200 ansible_user=nicolas
+k3s-server ansible_host=10.100.0.200 ansible_user=prov
+
+[k3s-server:vars]
+ansible_port = 22
+ansible_user = prov
+ansible_ssh_common_args='-o StrictHostKeyChecking=no -o ProxyCommand="ssh -o \'ForwardAgent yes\' prov@10.0.0.100 \'ssh-add /home/prov/.ssh/id_rsa && nc %h %p\'"'
 
 [k3s-agent]
-k3s-agent-1 ansible_host=10.100.0.201 ansible_user=nicolas
-k3s-agent-2 ansible_host=10.100.0.202 ansible_user=nicolas
-k3s-agent-3 ansible_host=10.100.0.203 ansible_user=nicolas
+k3s-agent-1 ansible_host=10.100.0.201 ansible_user=prov
+k3s-agent-2 ansible_host=10.100.0.202 ansible_user=prov
+k3s-agent-3 ansible_host=10.100.0.203 ansible_user=prov
+
+[k3s-agent:vars]
+ansible_port = 22
+ansible_user = prov
+ansible_ssh_common_args='-o StrictHostKeyChecking=no -o ProxyCommand="ssh -o \'ForwardAgent yes\' prov@10.0.0.100 \'ssh-add /home/prov/.ssh/id_rsa && nc %h %p\'"'

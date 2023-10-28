@@ -2,7 +2,7 @@ terraform {
   required_providers {
     proxmox = {
       source = "telmate/proxmox"
-      version = "2.9.3"
+      version = "2.9.11"
     }
   }
 }
@@ -56,6 +56,8 @@ resource "proxmox_vm_qemu" "bastion" {
     cpu      = "host"
     os_type  = "cloud-init"
     agent = 1
+
+    scsihw = "virtio-scsi-pci"
 
     disk {
         type     = "scsi"

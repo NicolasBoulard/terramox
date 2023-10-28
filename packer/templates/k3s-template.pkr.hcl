@@ -129,11 +129,11 @@ build {
 
     provisioner "ansible" {
         only = ["proxmox-clone.k3s-template"]
-        playbook_file = "../../ansible/playbooks/k3s-playbook.yml"
+        playbook_file = "../../ansible/playbooks/k3s-preinstall-playbook.yml"
         #roles_path = "../../ansible/roles"
         user = var.guest_username
         ansible_env_vars = ["ANSIBLE_HOST_KEY_CHECKING=False", "ANSIBLE_CONFIG=./ansible/ansible.cfg"]
-        extra_arguments = ["--extra-vars", "prov_user=${var.guest_username}"]
+        extra_arguments = ["--extra-vars", "prov_user=${var.guest_username}", "--scp-extra-args", "'-O'"]
         #ansible_ssh_common_args = ["-o", "ProxyJump=${var.guest_username}@${var.local_ip}"]
         #inventory_file_template = "{{ .HostAlias }} ansible_host={{ .Host }} ansible_user={{ .User }} ansible_port={{ .Port }}\n"
     }
