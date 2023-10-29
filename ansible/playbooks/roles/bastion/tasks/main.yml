@@ -166,6 +166,18 @@
     content: "{{ keypair.public_key }} nicolas@{{ ansible_hostname }}"
     dest: "{{ playbook_dir }}/files/nicolas-bastion.pub"
 
+- name: Add k3s entries into host file (currently no dns)
+  become: true
+  lineinfile:
+    path: /etc/cloud/templates/hosts.debian.tmpl # This is because cloud init manage host file
+    line: "{{ item }}"
+    insertbefore: EOF
+  loop:
+    - "10.100.0.200 k3s-server"
+    - "10.100.0.201 k3s-agent-1"
+    - "10.100.0.202 k3s-agent-2"
+    - "10.100.0.203 k3s-agent-3"
+
 # - name: Generate an OpenSSH rsa keypair for users
 #   become: true
 #   community.crypto.openssh_keypair:

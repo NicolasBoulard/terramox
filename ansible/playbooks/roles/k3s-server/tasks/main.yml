@@ -1,26 +1,9 @@
 - name: Run installer script
   become: true
-  shell: INSTALL_K3S_SKIP_DOWNLOAD=true /tmp/k3s-install.sh
+  shell: INSTALL_K3S_SKIP_DOWNLOAD=true /usr/local/bin/k3s-install
 
 - name: Get k3s token
   become: true
   shell: cat /var/lib/rancher/k3s/server/token
   register: k3s_token
-
-# - name: Get k3s ip
-#   become: true
-#   shell: ip addr show eth0 | grep -Po 'inet \K[\d.]+'
-#   register: k3s_server_ip
-
-- name: Save k3s_token to a local file
-  delegate_to: localhost
-  copy:
-    content: "{{ k3s_token.stdout }}"
-    dest: "{{ playbook_dir }}/files/k3s_token"
-
-# - name: Save k3s_server_ip to a local file
-#   delegate_to: localhost
-#   copy:
-#     content: "{{ k3s_server_ip.stdout }}"
-#     dest: "{{ playbook_dir }}/files/k3s_server_ip"
 

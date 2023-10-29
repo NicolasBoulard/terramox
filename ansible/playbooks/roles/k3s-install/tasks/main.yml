@@ -41,5 +41,5 @@
   become: true
   get_url:
     url: https://get.k3s.io/
-    dest: "/tmp/k3s-install.sh"
+    dest: "/usr/local/bin/k3s-install"
     mode: 0755

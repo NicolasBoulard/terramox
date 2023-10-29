@@ -5,7 +5,8 @@ All this repo contains infrastructure for my proxmox server
 1. Run `cd packer/template` and `packer init config.pkr.hcl`
 2. Run `packer build -var "myvar=value" debian-template`
 3. Deploy infrastructure with `cd terraform/environment/prod; terraform init; terraform apply`
-4. Once infrastructure is deployed, post-config for k3s_environment run `cd ansible; ansible-playbook -i inventory/hosts.ini k3s-playbook.yml`
+4. Connect to Bastion with `ssh nicolas@bastion` then change the password (not set)
+5. Once infrastructure is deployed, post-config for k3s_environment run `cd ansible; ansible-playbook -i inventories/prod/hosts playbooks/k3s-postconf-playbook.yml`
 ## Environment variables
 
 | Name | Default value | Mandatory | Description  |

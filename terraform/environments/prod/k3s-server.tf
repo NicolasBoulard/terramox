@@ -23,6 +23,7 @@ resource "proxmox_vm_qemu" "k3s-server" {
         format   = "raw"
     }
 
+    nameserver = "1.1.1.1"
     network {
         model   = "virtio"
         bridge  = "vmbr1"
@@ -38,7 +39,7 @@ resource "proxmox_vm_qemu" "k3s-server" {
         firewall = false
         macaddr = "52:54:00:00:02:00"
     }
-    ipconfig1 = "ip=10.0.0.200/24"
+    ipconfig1 = "ip=10.0.0.200/24,gw=10.0.0.1"
 }
 
 resource "proxmox_vm_qemu" "k3s-agent" {
@@ -65,6 +66,7 @@ resource "proxmox_vm_qemu" "k3s-agent" {
         format   = "raw"
     }
 
+    nameserver = "1.1.1.1"
     network {
         model   = "virtio"
         bridge  = "vmbr1"
@@ -73,6 +75,14 @@ resource "proxmox_vm_qemu" "k3s-agent" {
         macaddr = "52:54:01:00:02:0${count.index + 1}"
     }
     ipconfig0 = "ip=10.100.0.20${count.index + 1}/24"
+
+    network {
+        model   = "virtio"
+        bridge  = "vmbr0"
+        firewall = false
+        macaddr = "52:54:00:00:02:0${count.index + 1}"
+    }
+    ipconfig1 = "ip=10.0.0.20${count.index + 1}/24,gw=10.0.0.1"
 }
 
 # Generate Ansible inventory

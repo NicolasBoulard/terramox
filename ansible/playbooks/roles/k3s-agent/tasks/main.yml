@@ -1,0 +1,3 @@
+- name: Run installer script
+  become: true
+  shell: INSTALL_K3S_SKIP_DOWNLOAD=true K3S_URL=https://{{ K3S_SERVER_IP }}:6443 K3S_TOKEN={{ K3S_TOKEN }} /usr/local/bin/k3s-install
